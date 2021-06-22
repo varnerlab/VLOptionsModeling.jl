@@ -52,7 +52,7 @@ struct VLPutOptionContract <: VLAbstractAsset
     function VLPutOptionContract(assetSymbol::String, strikePrice::Float64, premimumValue::Float64; 
         expirationDate::Union{Nothing,Date}=nothing, numberOfContracts::Int64=1, sense::Symbol=:buy, contractMultiplier::Float64=100.0)
 
-        this = new(assetSymbol, strikePrice, expirationDate, premimumValue, numberOfContracts, sense, contractMultiplier)
+        _ = new(assetSymbol, strikePrice, expirationDate, premimumValue, numberOfContracts, sense, contractMultiplier)
     end
 end
 
