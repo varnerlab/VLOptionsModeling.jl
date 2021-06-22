@@ -93,8 +93,6 @@ function price(contractSet::Set{VLAbstractAsset}, latticeModel::VLBinomialLattic
             up_node_index = crr_index_array[parent_node_index,2]
             down_node_index = crr_index_array[parent_node_index,3]
 
-            @show (parent_node_index, up_node_index, down_node_index)
-
             # ok, let's compute the payback *if* we continue -
             future_payback = dfactor * (p * tree_value_array[up_node_index,3] + (1 - p) * tree_value_array[down_node_index,3])
             current_payback = tree_value_array[parent_node_index,2]
