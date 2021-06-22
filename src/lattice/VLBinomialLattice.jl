@@ -103,7 +103,7 @@ function price(contractSet::Set{VLAbstractAsset}, latticeModel::VLBinomialLattic
             node_price = decisionLogic(current_payback, future_payback)
 
             # capture -
-            tree_value_array[parent_node_index,3] = future_payback
+            tree_value_array[parent_node_index,3] = node_price
         end
 
         # return -
