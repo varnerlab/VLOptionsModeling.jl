@@ -14,4 +14,6 @@ using CSV
 include(joinpath(_PATH_TO_BASE, "VLTypes.jl"))
 include(joinpath(_PATH_TO_BASE, "VLBase.jl"))
 include(joinpath(_PATH_TO_BASE, "VLFactory.jl"))
+include(joinpath(_PATH_TO_BASE, "VLIntrinsic.jl"))
 include(joinpath(_PATH_TO_EXPIRATION, "VLExpiration.jl"))
+include(joinpath(_PATH_TO_LATTICE, "VLBinomialLattice.jl"))
