@@ -23,4 +23,4 @@ underlyingPrice = 50.0
 latticeModel = VLBinomialLattice(μ, σ, 𝝙t, numberOfLevels)
 
 # compute the price -
-price_tree = price(contract_set, latticeModel, underlyingPrice) |> check
+price_tree = binomial_price(contract_set, latticeModel, underlyingPrice) |> check

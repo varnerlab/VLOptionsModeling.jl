@@ -9,6 +9,7 @@ using JSON
 using Dates
 using DataFrames
 using CSV
+using Plots
 
 # include our codes -
 include(joinpath(_PATH_TO_BASE, "VLTypes.jl"))

@@ -7,7 +7,7 @@ end
 abstract type VLAbstractAsset end
 abstract type VLAbstractLattice end
 
-struct VLEquityAsset <: VLAbstractAsset
+mutable struct VLEquityAsset <: VLAbstractAsset
 
     # data -
     assetSymbol::String
@@ -20,7 +20,7 @@ struct VLEquityAsset <: VLAbstractAsset
     end
 end
 
-struct VLCallOptionContract <: VLAbstractAsset
+mutable struct VLCallOptionContract <: VLAbstractAsset
 
     # data -
     assetSymbol::String
@@ -38,7 +38,7 @@ struct VLCallOptionContract <: VLAbstractAsset
     end
 end
 
-struct VLPutOptionContract <: VLAbstractAsset
+mutable struct VLPutOptionContract <: VLAbstractAsset
 
     # data -
     assetSymbol::String
@@ -56,7 +56,7 @@ struct VLPutOptionContract <: VLAbstractAsset
     end
 end
 
-struct VLBinomialLattice <: VLAbstractLattice
+mutable struct VLBinomialLattice <: VLAbstractLattice
 
     # data -
     μ::Float64

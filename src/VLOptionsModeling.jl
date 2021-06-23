@@ -5,7 +5,8 @@ module VLOptionsModeling
 
     # export -
     export check
-    export price
+    export binomial_price
+    export expiration
 
     # export types -
     export VLAbstractAsset
