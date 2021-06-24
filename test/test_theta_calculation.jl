@@ -20,7 +20,7 @@ push!(contract_set, put_contract)
 σ = (1 / √𝝙t) * log(1.1224)
 numberOfLevels = 6
 
-# what is ups -
+# what is eps -
 eps = (29.42 / 30.42)
 
 # Create the lattice model -
