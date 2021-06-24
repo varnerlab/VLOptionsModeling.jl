@@ -20,8 +20,11 @@ push!(contract_set, put_contract)
 σ = (1 / √𝝙t) * log(1.1224)
 numberOfLevels = 6
 
+# what is ups -
+eps = (29.42 / 30.42)
+
 # Create the lattice model -
 latticeModel = VLBinomialLattice(μ, σ, 𝝙t, numberOfLevels)
 
 # compute delta -
-delta_value = 𝝙(contract_set, latticeModel, underlyingPrice) |> check
+theta_value = ϴ(contract_set, latticeModel, underlyingPrice, eps) |> check

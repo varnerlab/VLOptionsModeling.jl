@@ -9,7 +9,7 @@ function 𝝙(contractSet::Set{VLAbstractAsset}, latticeModel::VLBinomialLattice
 
         # initialize -
         baseUnderlyingPrice = underlyingPrice
-        𝛅 = 1.0
+        𝛅 = 0.01 * baseUnderlyingPrice
         downPrice = (baseUnderlyingPrice - 𝛅)
         upPrice = (baseUnderlyingPrice + 𝛅)
 
@@ -27,11 +27,29 @@ function 𝝙(contractSet::Set{VLAbstractAsset}, latticeModel::VLBinomialLattice
     end
 end
 
-function ϴ()::VLResult
+function ϴ(contractSet::Set{VLAbstractAsset}, latticeModel::VLBinomialLattice, underlyingPrice::Float64, eps::Float64; 
+    decisionLogic::Function=_american_decision_logic)::VLResult
 
     try
+
+        baseUnderlyingPrice = underlyingPrice
+        number_of_levels = latticeModel.numberOfLevels
+        current_delta_T = latticeModel.𝝙t
+        𝛅 = eps * current_delta_T
+        
+        # compute up and down price -
+        theta_value = 0.0
+        base_price_tree = binomial_price(contractSet, latticeModel, baseUnderlyingPrice; decisionLogic=decisionLogic) |> check
+        latticeModel.𝝙t = 𝛅
+        down_price_tree = binomial_price(contractSet, latticeModel, baseUnderlyingPrice; decisionLogic=decisionLogic) |> check
+
+        # compute theta -
+        theta_value = (down_price_tree[1,3] - base_price_tree[1,3])
+
+        # return -
+        return VLResult(theta_value)
     catch error
-        return VLresult(error)
+        return VLResult(error)
     end
 end
 # --- PUBLIC METHODS ABOVE HERE ------------------------------------------------------------------ #
