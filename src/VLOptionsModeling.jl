@@ -8,6 +8,10 @@ module VLOptionsModeling
     export binomial_price
     export expiration
 
+    # greeks -
+    export 𝝙
+    export ϴ
+
     # export types -
     export VLAbstractAsset
     export VLAbstractLattice

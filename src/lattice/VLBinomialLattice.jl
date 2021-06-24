@@ -28,8 +28,6 @@ end
 function _american_decision_logic(currentValue::Float64, futureValue::Float64)::Float64
     return max(currentValue, futureValue)
 end
-
-
 # --- PRIVATE METHODS ABOVE HERE ----------------------------------------------------------------- #
 
 # --- PUBLIC METHODS BELOW HERE ------------------------------------------------------------------ #
@@ -111,7 +109,7 @@ function binomial_price(contractSet::Set{VLAbstractAsset}, latticeModel::VLBinom
     end
 end
 
-function binomial_price(contract::Union{VLPutOptionContract,VLCallOptionContract}, latticeModel::VLBinomialLattice, underlyingPriceArray::Array{Float64,1};
+function binomial_price(contractSet::Set{VLAbstractAsset}, latticeModel::VLBinomialLattice, underlyingPriceArray::Array{Float64,1};
     decisionLogic::Function=_american_decision_logic)::VLResult
 
     try
@@ -123,16 +121,47 @@ function binomial_price(contract::Union{VLPutOptionContract,VLCallOptionContract
         # ok, so let's simulate updating the strike price -
         for (index, underlying_price) in enumerate(underlyingPriceArray)
 
-            # package -
-            contract_set = Set{VLAbstractAsset}()
-            push!(contract_set, contract)
-
             # compute -
-            price_tree = binomial_price(contract_set, latticeModel, underlying_price; decisionLogic=decisionLogic) |> check
+            price_tree = binomial_price(contractSet, latticeModel, underlying_price; decisionLogic=decisionLogic) |> check
             price_value = price_tree[1,3]   # the value of the contract is *always* the 1,3 element -
 
             # grab -
             contract_price_array[index,1] = underlying_price
+            contract_price_array[index,2] = price_value
+        end
+
+        # return -
+        return VLResult(contract_price_array)
+    catch error
+        return VLResult(error)
+    end
+end
+
+function binomial_price(contract::Union{VLCallOptionContract,VLPutOptionContract}, latticeModel::VLBinomialLattice, 
+    underlyingPrice::Float64, strikPriceArray::Array{Float64,1}; decisionLogic::Function=_american_decision_logic)::VLResult
+
+    try
+
+        # initialize -
+        number_of_strike_prices = length(strikPriceArray)
+        contract_price_array = Array{Float64,2}(undef, number_of_strike_prices, 2)
+
+        # ok, so lets set the strike price and process the contract =
+        for (index, strike_price) in enumerate(strikPriceArray)
+            
+            # set the price - 
+            contract.strikePrice = strike_price
+
+            # package -
+            contract_set = Set{VLAbstractAsset}()
+            push!(contract_set, contract)
+        
+            # calculate the contract price -
+            price_tree = binomial_price(contract_set, latticeModel, underlyingPrice; decisionLogic=decisionLogic) |> check
+            price_value = price_tree[1,3]   # the value of the contract is *always* the 1,3 element -
+
+            # grab -
+            contract_price_array[index,1] = strike_price
             contract_price_array[index,2] = price_value
         end
 
