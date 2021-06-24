@@ -9,14 +9,16 @@ function 𝝙(contractSet::Set{VLAbstractAsset}, latticeModel::VLBinomialLattice
 
         # initialize -
         baseUnderlyingPrice = underlyingPrice
-        perturbedUnderlyingPrice = (baseUnderlyingPrice + 1.0)
+        𝛅 = 1.0
+        downPrice = (baseUnderlyingPrice - 𝛅)
+        upPrice = (baseUnderlyingPrice + 𝛅)
 
         # compute the price for the base underlying value -
-        base_price_tree = binomial_price(contractSet, latticeModel, baseUnderlyingPrice) |> check
-        perturbed_price_tree = binomial_price(contractSet, latticeModel, perturbedUnderlyingPrice; decisionLogic=decisionLogic) |> check
+        up_price_tree = binomial_price(contractSet, latticeModel, upPrice; decisionLogic=decisionLogic) |> check
+        down_price_tree = binomial_price(contractSet, latticeModel, downPrice; decisionLogic=decisionLogic) |> check
 
         # compute delta -
-        delta_value = perturbed_price_tree[1,3] - base_price_tree[1,3]
+        delta_value = (up_price_tree[1,3] - down_price_tree[1,3]) / (2 * 𝛅)
 
         # return -
         return VLResult(delta_value)
