@@ -28,17 +28,39 @@ end
 function _american_decision_logic(currentValue::Float64, futureValue::Float64)::Float64
     return max(currentValue, futureValue)
 end
+
+function _crr_movement_logic(latticeModel::VLBinomialLattice)::NamedTuple
+
+    # initialize - get stuff from the lattice model -
+    µ = latticeModel.µ
+    σ = latticeModel.σ
+    𝝙t = latticeModel.𝝙t
+
+    # compute the movement up, down and probability -
+    u = exp(σ * √𝝙t)
+    d = exp(-σ * √𝝙t)
+    p = (exp(µ * 𝝙t) - d) / (u - d)
+    dfactor = exp(-µ * 𝝙t)
+
+    # setup the tuple -
+    movement_tuple = (up=u, down=d, probability=p, discount=dfactor)
+
+    # return -
+    return movement_tuple
+end
+
+
 # --- PRIVATE METHODS ABOVE HERE ----------------------------------------------------------------- #
 
 # --- PUBLIC METHODS BELOW HERE ------------------------------------------------------------------ #
 """
     binomial_price(contractSet::Set{VLAbstractAsset}, latticeModel::VLBinomialLattice, underlyingPrice::Float64; 
-        decisionLogic::Function=_american_decision_logic) -> VLResult
+        decisionLogic::Function = _american_decision_logic, movementLogic::Function = _crr_movement_logic) -> VLResult
 
 Magical description goes here!
 """
 function binomial_price(contractSet::Set{VLAbstractAsset}, latticeModel::VLBinomialLattice, underlyingPrice::Float64; 
-    decisionLogic::Function=_american_decision_logic)::VLResult
+    decisionLogic::Function=_american_decision_logic, movementLogic::Function = _crr_movement_logic)::VLResult
 
     try
 
@@ -47,13 +69,15 @@ function binomial_price(contractSet::Set{VLAbstractAsset}, latticeModel::VLBinom
         crr_index_array = _compute_crr_index_array(numberOfLevels)
         total_number_of_lattice_nodes = crr_index_array[end,end]    # the number of nodes will be the end, end element of the index array -
         number_of_nodes_to_evaluate = crr_index_array[end,1]        # the number of nodes that we need to evaluate is goven by the end x 1 element 
-        µ = latticeModel.µ
-        σ = latticeModel.σ
-        𝝙t = latticeModel.𝝙t
-        u = exp(σ * √𝝙t)
-        d = exp(-σ * √𝝙t)
-        p = (exp(µ * 𝝙t) - d) / (u - d)
-        dfactor = exp(-µ * 𝝙t)
+        
+        # compute the movement using the movement function -
+        movement_tuple = movementLogic(latticeModel)
+        u = movement_tuple.up
+        d = movement_tuple.down
+        p = movement_tuple.probability
+        dfactor = movement_tuple.discount
+        
+        # init the tree -
         tree_value_array = Array{Float64,2}(undef, total_number_of_lattice_nodes, 3) # nodes x 3 = col1: underlying price, col2: intrinsic value, col3: option price
 
         # First: let's compute the underlying price on the lattice -
@@ -117,12 +141,12 @@ end
 
 """
     binomial_price(contractSet::Set{VLAbstractAsset}, latticeModel::VLBinomialLattice, underlyingPriceArray::Array{Float64,1};
-        decisionLogic::Function=_american_decision_logic) -> VLResult
+        decisionLogic::Function = _american_decision_logic, movementLogic::Function = _crr_movement_logic) -> VLResult
 
 Magical description goes here!
 """
 function binomial_price(contractSet::Set{VLAbstractAsset}, latticeModel::VLBinomialLattice, underlyingPriceArray::Array{Float64,1};
-    decisionLogic::Function=_american_decision_logic)::VLResult
+    decisionLogic::Function=_american_decision_logic, movementLogic::Function = _crr_movement_logic)::VLResult
 
     try
 
@@ -134,7 +158,7 @@ function binomial_price(contractSet::Set{VLAbstractAsset}, latticeModel::VLBinom
         for (index, underlying_price) in enumerate(underlyingPriceArray)
 
             # compute -
-            price_tree = binomial_price(contractSet, latticeModel, underlying_price; decisionLogic=decisionLogic) |> check
+            price_tree = binomial_price(contractSet, latticeModel, underlying_price; decisionLogic=decisionLogic, movementLogic=movementLogic) |> check
             price_value = price_tree[1,3]   # the value of the contract is *always* the 1,3 element -
 
             # grab -
@@ -151,12 +175,14 @@ end
 
 """
     binomial_price(contract::Union{VLCallOptionContract,VLPutOptionContract}, latticeModel::VLBinomialLattice, 
-        underlyingPrice::Float64, strikPriceArray::Array{Float64,1}; decisionLogic::Function=_american_decision_logic) -> VLResult
+        underlyingPrice::Float64, strikPriceArray::Array{Float64,1}; 
+            decisionLogic::Function = _american_decision_logic, movementLogic::Function = _crr_movement_logic) -> VLResult
 
 Magical description goes here!
 """
 function binomial_price(contract::Union{VLCallOptionContract,VLPutOptionContract}, latticeModel::VLBinomialLattice, 
-    underlyingPrice::Float64, strikPriceArray::Array{Float64,1}; decisionLogic::Function=_american_decision_logic)::VLResult
+    underlyingPrice::Float64, strikPriceArray::Array{Float64,1}; 
+        decisionLogic::Function=_american_decision_logic, movementLogic::Function = _crr_movement_logic)::VLResult
 
     try
 
@@ -175,7 +201,7 @@ function binomial_price(contract::Union{VLCallOptionContract,VLPutOptionContract
             push!(contract_set, contract)
         
             # calculate the contract price -
-            price_tree = binomial_price(contract_set, latticeModel, underlyingPrice; decisionLogic=decisionLogic) |> check
+            price_tree = binomial_price(contract_set, latticeModel, underlyingPrice; decisionLogic=decisionLogic, movementLogic=movementLogic) |> check
             price_value = price_tree[1,3]   # the value of the contract is *always* the 1,3 element -
 
             # grab -
