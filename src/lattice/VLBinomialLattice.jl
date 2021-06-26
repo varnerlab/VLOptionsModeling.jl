@@ -31,6 +31,12 @@ end
 # --- PRIVATE METHODS ABOVE HERE ----------------------------------------------------------------- #
 
 # --- PUBLIC METHODS BELOW HERE ------------------------------------------------------------------ #
+"""
+    binomial_price(contractSet::Set{VLAbstractAsset}, latticeModel::VLBinomialLattice, underlyingPrice::Float64; 
+        decisionLogic::Function=_american_decision_logic) -> VLResult
+
+Magical description goes here!
+"""
 function binomial_price(contractSet::Set{VLAbstractAsset}, latticeModel::VLBinomialLattice, underlyingPrice::Float64; 
     decisionLogic::Function=_american_decision_logic)::VLResult
 
@@ -109,6 +115,12 @@ function binomial_price(contractSet::Set{VLAbstractAsset}, latticeModel::VLBinom
     end
 end
 
+"""
+    binomial_price(contractSet::Set{VLAbstractAsset}, latticeModel::VLBinomialLattice, underlyingPriceArray::Array{Float64,1};
+        decisionLogic::Function=_american_decision_logic) -> VLResult
+
+Magical description goes here!
+"""
 function binomial_price(contractSet::Set{VLAbstractAsset}, latticeModel::VLBinomialLattice, underlyingPriceArray::Array{Float64,1};
     decisionLogic::Function=_american_decision_logic)::VLResult
 
@@ -137,6 +149,12 @@ function binomial_price(contractSet::Set{VLAbstractAsset}, latticeModel::VLBinom
     end
 end
 
+"""
+    binomial_price(contract::Union{VLCallOptionContract,VLPutOptionContract}, latticeModel::VLBinomialLattice, 
+        underlyingPrice::Float64, strikPriceArray::Array{Float64,1}; decisionLogic::Function=_american_decision_logic) -> VLResult
+
+Magical description goes here!
+"""
 function binomial_price(contract::Union{VLCallOptionContract,VLPutOptionContract}, latticeModel::VLBinomialLattice, 
     underlyingPrice::Float64, strikPriceArray::Array{Float64,1}; decisionLogic::Function=_american_decision_logic)::VLResult
 
