@@ -8,7 +8,7 @@ makedocs(
     ),
     modules = [VLOptionsModeling],
     pages = [
-        "Home" => "index.md",
+        "VLOptionsModeling" => "index.md",
     ],
 )
 

@@ -2,6 +2,12 @@
 # --- PRIVATE METHODS ABOVE HERE ----------------------------------------------------------------- #
 
 # --- PUBLIC METHODS BELOW HERE ------------------------------------------------------------------ #
+"""
+    𝝙(contractSet::Set{VLAbstractAsset}, latticeModel::VLBinomialLattice, underlyingPrice::Float64; 
+        decisionLogic::Function=_american_decision_logic) -> VLResult
+
+Magical description goes here!
+"""
 function 𝝙(contractSet::Set{VLAbstractAsset}, latticeModel::VLBinomialLattice, underlyingPrice::Float64; 
     decisionLogic::Function=_american_decision_logic)::VLResult
 
@@ -27,6 +33,12 @@ function 𝝙(contractSet::Set{VLAbstractAsset}, latticeModel::VLBinomialLattice
     end
 end
 
+"""
+    ϴ(contractSet::Set{VLAbstractAsset}, latticeModel::VLBinomialLattice, underlyingPrice::Float64, eps::Float64; 
+        decisionLogic::Function=_american_decision_logic) -> VLResult
+
+Magical description goes here!
+"""
 function ϴ(contractSet::Set{VLAbstractAsset}, latticeModel::VLBinomialLattice, underlyingPrice::Float64, eps::Float64; 
     decisionLogic::Function=_american_decision_logic)::VLResult
 
