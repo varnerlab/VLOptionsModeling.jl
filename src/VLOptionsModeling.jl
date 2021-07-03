@@ -7,6 +7,8 @@ module VLOptionsModeling
     export check
     export binomial_price
     export expiration
+    export lsm_price
+
 
     # greeks -
     export 𝝙
