@@ -1,4 +1,5 @@
 using Base:Float64
+
 # concrete result type -
 struct VLResult{T}
     value::T
